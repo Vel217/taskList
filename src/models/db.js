@@ -10,6 +10,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.REACT_APP_DB_HOST,
     dialect: process.env.REACT_APP_DB_DIALECT,
+    dialectModule: import("mysql2").default, // Needed to fix sequelize issues with WebPack
   }
 );
 
