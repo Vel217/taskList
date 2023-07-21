@@ -20,12 +20,6 @@ app.use(express.static("./build"));
 app.use("/tasks", tasksRouter);
 app.use("/auth", authRouter);
 
-app.get("*", (req, res) => {
-  res.sendFile(
-    path.join(url.fileURLToPath(import.meta.url), "./build/index.html")
-  );
-});
-
 app.listen(process.env.REACT_APP_PORT, () => {
   console.log("Сервер запущен на порту 5001");
 });
