@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-
+import * as url from "url";
+import path from "path";
 import dotenv from "dotenv";
-
 import tasksRouter from "./src/routes/task.routes.js";
 import authRouter from "./src/routes/auth.routes.js";
 
@@ -22,6 +22,12 @@ app.use("/auth", authRouter);
 
 app.get("*", (req, res) => {
   res.sendFile("index.html", { root: "./build" });
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(url.fileURLToPath(import.meta.url), "./build/index.html")
+  );
 });
 
 app.listen(process.env.REACT_APP_PORT, () => {
