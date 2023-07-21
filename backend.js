@@ -30,8 +30,8 @@ app.get("*", (req, res) => {
   );
 });
 
-app.listen(process.env.REACT_APP_PORT, () => {
-  console.log(`Сервер запущен на порту ${process.env.REACT_APP_PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Сервер запущен на порту ${process.env.PORT}`);
 });
 
 export default app;
