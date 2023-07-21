@@ -25,5 +25,7 @@ app.get("*", (req, res) => {
 });
 
 app.listen(process.env.REACT_APP_PORT, () => {
-  console.log("Сервер запущен на порту 3008");
+  console.log(`Сервер запущен на порту ${process.env.REACT_APP_PORT}`);
 });
+
+export default app;
