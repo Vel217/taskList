@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getTask } from "../../../api/task/task.api.js";
 
 import SortButton from "./SortButton.js";
@@ -16,7 +16,7 @@ function TaskTable({ isAdmin }) {
   const [sortBy, setSortBy] = useState("name");
   const [sortDirection, setSortDirection] = useState("asc");
   const [error, setError] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState();
   const [currentItem, setCurrentItem] = useState(null);
 
   const handleOpenModal = (item) => {

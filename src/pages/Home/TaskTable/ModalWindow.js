@@ -6,13 +6,21 @@ import { updateTaskDB } from "../../../api/task/task.api.js";
 import SuccessBlock from "../TaskForm/SuccessBlock.js";
 import ErrorBlock from "../../../components/ErrorBlock.js";
 
-function ModalWindow({ open, item, onClose }) {
+function ModalWindow({ item, onClose }) {
   const cancelButtonRef = useRef(null);
-  const [text, setText] = useState(item.text);
-  const [status, setStatus] = useState(item.status);
+  const [text, setText] = useState("");
+  const [status, setStatus] = useState(false);
   const [errorAdmin, setErrorAdmin] = useState(false);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  useEffect(() => {
+    setText(item.text);
+    setStatus(item.status);
+    setName(item.name);
+    setEmail(item.email);
+  }, []);
 
   const onChangeText = (e) => {
     setText(e.target.value);
@@ -39,17 +47,9 @@ function ModalWindow({ open, item, onClose }) {
     setErrorAdmin(false);
   }, [text, status]);
 
-  const handleClose = () => {
-    onClose();
-  };
   return (
     <Transition.Root show={true} as={Fragment}>
-      <Dialog
-        as="div"
-        className="relative z-10"
-        initialFocus={cancelButtonRef}
-        onClose={onClose}
-      >
+      <Dialog as="div" className="relative z-10" onClose={() => {}}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -81,7 +81,7 @@ function ModalWindow({ open, item, onClose }) {
                       </label>
 
                       <p className="block w-full px-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        {item.name}
+                        {name}
                       </p>
                     </div>
                     <div className="flex items-start flex-col gap-y-2 ">
@@ -90,7 +90,7 @@ function ModalWindow({ open, item, onClose }) {
                       </label>
 
                       <p className="block w-full px-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        {item.email}
+                        {email}
                       </p>
                     </div>
                     <div className="flex items-start flex-col gap-y-2 ">
@@ -146,7 +146,7 @@ function ModalWindow({ open, item, onClose }) {
                   <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-red-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300"
-                    onClick={handleClose}
+                    onClick={onClose}
                   >
                     Close
                   </button>
