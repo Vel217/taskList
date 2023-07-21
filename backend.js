@@ -25,5 +25,5 @@ app.get("*", (req, res) => {
 });
 
 app.listen(process.env.REACT_APP_PORT, () => {
-  console.log("Сервер запущен на порту 5001");
+  console.log("Сервер запущен на порту 3008");
 });
