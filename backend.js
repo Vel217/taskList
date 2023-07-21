@@ -19,6 +19,6 @@ app.use(
 app.use("/tasks", tasksRouter);
 app.use("/auth", authRouter);
 
-app.listen(5001, () => {
+app.listen(process.env.REACT_APP_PORT, () => {
   console.log("Сервер запущен на порту 5001");
 });
