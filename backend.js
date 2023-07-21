@@ -21,7 +21,8 @@ app.use("/tasks", tasksRouter);
 app.use("/auth", authRouter);
 
 app.get("*", (req, res) => {
-  res.sendFile("index.html", { root: "./build" });
+  res.sendFile("index.html", { root: "./users_app/build" });
+});
 
 app.listen(process.env.REACT_APP_PORT, () => {
   console.log("Сервер запущен на порту 5001");
