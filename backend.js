@@ -21,7 +21,7 @@ app.use("/tasks", tasksRouter);
 app.use("/auth", authRouter);
 
 app.get("*", (req, res) => {
-  res.sendFile("index.html", { root: "./users_app/build" });
+  res.sendFile("index.html", { root: "./build" });
 });
 
 app.listen(process.env.REACT_APP_PORT, () => {
