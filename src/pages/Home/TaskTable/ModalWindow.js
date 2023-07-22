@@ -5,46 +5,44 @@ import React from "react";
 import { updateTaskDB } from "../../../api/task/task.api.js";
 import SuccessBlock from "../../../components/SuccessBlock.js";
 import ErrorBlock from "../../../components/ErrorBlock.js";
+import rootStore from "../../../stores/CombineStore.js";
+import { observer } from "mobx-react-lite";
 
-function ModalWindow({ item, onClose }) {
+function ModalWindow({ onClose }) {
+  const { currentItem } = rootStore.taskTable.taskTable.currentItem;
+  const { text, status, errorAdmin, error, success, name, email } =
+    rootStore.modal.modal;
   const cancelButtonRef = useRef(null);
-  const [text, setText] = useState("");
-  const [status, setStatus] = useState(false);
-  const [errorAdmin, setErrorAdmin] = useState(false);
-  const [error, setError] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   useEffect(() => {
-    setText(item.text);
-    setStatus(item.status);
-    setName(item.name);
-    setEmail(item.email);
+    rootStore.modal.changeText(currentItem.text);
+    rootStore.modal.changeStatus(currentItem.status);
+    rootStore.modal.changeName(currentItem.name);
+    rootStore.modal.changeEmail(currentItem.email);
   }, []);
 
   const onChangeText = (e) => {
-    setText(e.target.value);
+    rootStore.modal.changeText(e.target.value);
   };
   const onChangeCheck = (e) => {
-    setStatus((prevChecked) => !prevChecked);
+    rootStore.modal.changeStatus((prevChecked) => !prevChecked);
   };
 
   const updateTaskAdmin = () => {
     const userId = localStorage.getItem("user");
 
-    updateTaskDB(text, status, item.id, userId).then((res) => {
+    updateTaskDB(text, status, currentItem.id, userId).then((res) => {
       if (res.status === 200) {
-        setSuccess(true);
+        rootStore.modal.changeSuccessStatus(true);
       } else if (res.status === 403) {
-        setErrorAdmin(true);
+        rootStore.modal.changeErrorAdminStatus(true);
       } else {
-        setError(true);
+        rootStore.modal.changeErrorStatus(true);
       }
     });
   };
   useEffect(() => {
-    setError(false);
-    setErrorAdmin(false);
+    rootStore.modal.changeErrorAdminStatus(false);
+    rootStore.modal.changeErrorStatus(false);
   }, [text, status]);
 
   return (
@@ -165,4 +163,4 @@ function ModalWindow({ item, onClose }) {
   );
 }
 
-export default ModalWindow;
+export default observer(ModalWindow);

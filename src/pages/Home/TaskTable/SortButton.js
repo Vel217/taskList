@@ -1,4 +1,7 @@
-function SortButton({ text, onClick, isSortAcs }) {
+import rootStore from "../../../stores/CombineStore.js";
+
+function SortButton({ text, onClick }) {
+  const { sortDirection } = rootStore.taskTable.taskTable;
   return (
     <button
       className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex gap-2"
@@ -6,7 +9,7 @@ function SortButton({ text, onClick, isSortAcs }) {
     >
       {text}
 
-      {isSortAcs === "asc" ? (
+      {sortDirection === "asc" ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

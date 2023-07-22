@@ -1,7 +1,7 @@
 import { observable, action } from "mobx";
 
 const Notification = observable({
-  notification: { error: false, success: true },
+  notification: { error: false, success: false },
 
   errorTrue: action(function () {
     this.notification.error = true;

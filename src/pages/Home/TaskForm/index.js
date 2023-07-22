@@ -1,50 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { sendTask } from "../../../api/task/task.api.js";
 import Input from "../../../components/Input.js";
 import SuccessBlock from "../../../components/SuccessBlock.js";
 import rootStore from "../../../stores/CombineStore.js";
 import { useObserver } from "mobx-react-lite";
-
-import { emailRegex } from "../../../components/regExp.js";
 import ErrorBlock from "../../../components/ErrorBlock.js";
 
 function TaskForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [text, setText] = useState("");
-  const [successfulSending, setSuccessfulSending] = useState(false);
-  const [error, setError] = useState(false);
-  const [isValidEmail, setIsValidEmail] = useState(true);
-
+  const { error, success, name, email, text, validEmail } =
+    rootStore.taskForm.taskForm;
   const newTask = (e) => {
     e.preventDefault();
-    if (name && email && text && isValidEmail) {
+    if (name && email && text && validEmail) {
       sendTask(name, email, text).then((res) => {
         if (res.status === 200) {
-          setSuccessfulSending(true);
-          setName("");
-          setEmail("");
-          setText("");
+          rootStore.taskForm.successTrue();
+          rootStore.taskForm.reset();
+          rootStore.taskForm.successTrue();
         } else {
-          setError(true);
+          rootStore.taskForm.errorTrue();
         }
       });
     }
   };
 
   const onChangeName = (e) => {
-    setName(e.target.value);
+    rootStore.taskForm.addName(e.target.value);
   };
   const onChangeEmail = (e) => {
     const value = e.target.value;
-    setEmail(value);
-    setIsValidEmail(emailRegex.test(value));
+    rootStore.taskForm.addEmail(value);
+
+    rootStore.taskForm.validationEmail(value);
   };
 
   useEffect(() => {
     if (name || email || text) {
-      setSuccessfulSending(false);
-      setError(false);
+      rootStore.taskForm.successFalse();
+
+      rootStore.taskForm.errorFalse();
     }
   }, [name, email, text]);
 
@@ -68,7 +62,7 @@ function TaskForm() {
           onChange={onChangeEmail}
           placeholder="Fill email"
         />
-        {isValidEmail ? null : (
+        {validEmail ? null : (
           <div class="rounded-md bg-red-50 p-4">
             <div class="flex">
               <div class="flex-shrink-0"></div>
@@ -93,7 +87,7 @@ function TaskForm() {
           required
           value={text}
           onChange={(e) => {
-            setText(e.target.value);
+            rootStore.taskForm.addText(e.target.value);
           }}
           className="resize-none  block px-4 w-full rounded-md  border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
           placeholder="Text of task"
@@ -106,7 +100,7 @@ function TaskForm() {
         >
           Send new task in list
         </button>
-        {successfulSending && (
+        {success && (
           <SuccessBlock
             text={
               "The task has been successfully created. Refresh the page to see the new list"

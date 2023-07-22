@@ -2,6 +2,7 @@ import { observable, action } from "mobx";
 
 const Tasks = observable({
   tasks: [],
+  status: undefined,
 
   get: action(function (list) {
     this.task = list;

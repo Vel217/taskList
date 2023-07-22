@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect } from "react";
 import { getTask } from "../../../api/task/task.api.js";
 
 import SortButton from "./SortButton.js";
@@ -8,25 +8,21 @@ import TableHeader from "./TableHeader.js";
 import { ASC, DESC } from "../../../config.js";
 import { useObserver } from "mobx-react-lite";
 import ModalWindow from "./ModalWindow.js";
+import rootStore from "../../../stores/CombineStore.js";
 
-function TaskTable({ isAdmin }) {
-  const [list, setList] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [sortBy, setSortBy] = useState("name");
-  const [sortDirection, setSortDirection] = useState("asc");
-  const [error, setError] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState();
-  const [currentItem, setCurrentItem] = useState(null);
+function TaskTable() {
+  const { error, currentPage, sortBy, sortDirection, isModalOpen } =
+    rootStore.taskTable.taskTable;
 
   const handleOpenModal = (item) => {
-    setCurrentItem(item);
-    setIsModalOpen(true);
+    rootStore.taskTable.changeCurrentItem(item);
+    rootStore.taskTable.modalIsOpen(true);
   };
 
   const handleCloseModal = () => {
-    setCurrentItem(null);
-    setIsModalOpen(false);
+    rootStore.taskTable.changeCurrentItem(null);
+    rootStore.modal.reset();
+    rootStore.taskTable.modalIsOpen(false);
   };
 
   useEffect(() => {
@@ -37,21 +33,24 @@ function TaskTable({ isAdmin }) {
     getTask(currentPage, sortBy, sortDirection)
       .then((res) => res.json())
       .then((data) => {
-        setList(data.tasks);
-        setTotalPages(data.totalPages);
+        console.log("data", data);
+        rootStore.taskTable.addList(data.tasks);
+        rootStore.taskTable.changeTotalPage(data.totalPages);
+        console.log(rootStore.taskTable.taskTable.list, "123");
       })
       .catch((error) => {
-        setError(true);
-        console.error("Ошибка при получении списка задач:", error);
+        rootStore.taskTable.errorTrue();
       });
   };
 
   const handleSort = (field) => {
     if (field === sortBy) {
-      setSortDirection(sortDirection === ASC ? DESC : ASC);
+      rootStore.taskTable.changeSortDirection(
+        sortDirection === ASC ? DESC : ASC
+      );
     } else {
-      setSortBy(field);
-      setSortDirection(ASC);
+      rootStore.taskTable.changeSortBy(field);
+      rootStore.taskTable.changeSortDirection(ASC);
     }
   };
 
@@ -60,7 +59,7 @@ function TaskTable({ isAdmin }) {
   const sortByStatus = () => handleSort("status");
 
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
+    rootStore.taskTable.changeCurrentPage(newPage);
   };
 
   return useObserver(() => (
@@ -88,31 +87,22 @@ function TaskTable({ isAdmin }) {
         <div className="-mx-4 -my-2 overflow-x-auto lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle  lg:px-8">
             <table className="min-w-full divide-y divide-gray-300 ml-5">
-              <TableHeader isAdmin={isAdmin} />
+              <TableHeader />
 
               {!error ? (
-                <TableItem
-                  list={list}
-                  isAdmin={isAdmin}
-                  onClickEdit={handleOpenModal}
-                />
+                <TableItem onClickEdit={handleOpenModal} />
               ) : (
                 <>Error to get task list, try again</>
               )}
             </table>
             <div className="ml-5">
-              <Pagination
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+              <Pagination onPageChange={handlePageChange} />
             </div>
           </div>
         </div>
       </div>
 
-      {isModalOpen && (
-        <ModalWindow item={currentItem} onClose={handleCloseModal} />
-      )}
+      {isModalOpen && <ModalWindow onClose={handleCloseModal} />}
     </div>
   ));
 }

@@ -1,5 +1,5 @@
 import { useObserver } from "mobx-react-lite";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { LOGIN_PATH } from "../../config.js";
 import TaskForm from "./TaskForm/index.js";
@@ -9,9 +9,9 @@ import { authGet, logOut } from "../../api/login/login.api.js";
 import ErrorBlock from "../../components/ErrorBlock.js";
 
 function App() {
+  const { isAdmin } = rootStore.auth.isAdmin;
+  const { error } = rootStore.notification.notification;
   const navigate = useNavigate();
-  const [isAdmin, setIsAdmin] = useState(rootStore.auth.isAdmin);
-  const [error, setError] = useState(false);
 
   const login = () => {
     navigate(LOGIN_PATH);
@@ -21,16 +21,15 @@ function App() {
 
     authGet(authId).then((res) => {
       if (res.status === 200) {
-        setError(false);
         rootStore.notification.errorFalse();
-        setIsAdmin(true);
+
         rootStore.auth.login();
       } else {
-        setIsAdmin(false);
         rootStore.auth.login();
       }
     });
   }, [isAdmin]);
+
   const logout = useCallback(() => {
     const userId = localStorage.getItem("user");
     logOut(userId).then((res) => {
@@ -38,7 +37,7 @@ function App() {
       }
       localStorage.removeItem("session");
       localStorage.setItem("session", false);
-      setIsAdmin(false);
+      rootStore.auth.logout();
     });
     rootStore.auth.logout();
   }, []);
@@ -66,7 +65,7 @@ function App() {
       <p className="text-2xl text-center"> TODO LIST</p>
 
       <TaskForm />
-      <TaskTable isAdmin={isAdmin} />
+      <TaskTable />
     </div>
   ));
 }

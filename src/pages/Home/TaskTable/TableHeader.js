@@ -1,4 +1,7 @@
-function TableHeader({ isAdmin }) {
+import { observer } from "mobx-react-lite";
+import rootStore from "../../../stores/CombineStore.js";
+
+function TableHeader() {
   return (
     <thead>
       <tr>
@@ -32,7 +35,7 @@ function TableHeader({ isAdmin }) {
         >
           Edited by admin
         </th>
-        {isAdmin && (
+        {rootStore.auth.isAdmin && (
           <th
             scope="col"
             className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -45,4 +48,4 @@ function TableHeader({ isAdmin }) {
   );
 }
 
-export default TableHeader;
+export default observer(TableHeader);

@@ -1,19 +1,19 @@
-import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { deleteTaskDB } from "../../../api/task/task.api.js";
 import ErrorBlock from "../../../components/ErrorBlock.js";
 
 import SuccessBlock from "../../../components/SuccessBlock.js";
+import rootStore from "../../../stores/CombineStore.js";
 
-function TableItem({ list, isAdmin, onClickEdit }) {
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
+function TableItem({ onClickEdit }) {
+  const { list, deleteSuccess, deleteError } = rootStore.taskTable.taskTable;
 
   const deleteTask = (id) => {
     deleteTaskDB(id).then((res) => {
       if (res.status === 200) {
-        setSuccess(true);
+        rootStore.taskTable.changeDeleteSuccess(true);
       } else {
-        setError(true);
+        rootStore.taskTable.changeDeleteError(true);
       }
     });
   };
@@ -21,14 +21,14 @@ function TableItem({ list, isAdmin, onClickEdit }) {
   return (
     <>
       <tbody className="divide-y divide-gray-200">
-        {error && (
+        {deleteError && (
           <ErrorBlock
             text={
               "Only an administrator can delete a task. Please login as an administrator"
             }
           />
         )}
-        {success && (
+        {deleteSuccess && (
           <SuccessBlock
             text={
               "The task has been successfully delete. Refresh the page to see the new list"
@@ -53,7 +53,7 @@ function TableItem({ list, isAdmin, onClickEdit }) {
               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                 {item.editedByAdmin ? "edited" : "not edited"}
               </td>
-              {isAdmin && (
+              {rootStore.auth.isAdmin && (
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 flex gap-5 items-center">
                   <div className="flex flex-col">
                     <div className="flex gap-5">
@@ -88,4 +88,4 @@ function TableItem({ list, isAdmin, onClickEdit }) {
   );
 }
 
-export default TableItem;
+export default observer(TableItem);

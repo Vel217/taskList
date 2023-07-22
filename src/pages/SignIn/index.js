@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { signIn } from "../../api/login/login.api.js";
 import Input from "../../components/Input.js";
@@ -9,15 +9,11 @@ import { useObserver } from "mobx-react-lite";
 
 function SignIn() {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
-
+  const { error, name, password } = rootStore.signIn.signIn;
   useEffect(() => {
-    if (name || password) setError(false);
+    if (name || password) rootStore.signIn.errorFalse();
   }, [name, password]);
-  const store = rootStore;
-  const isAdmin = store.auth.isAdmin;
+
   const adminLogin = (e) => {
     e.preventDefault();
     signIn(name, password)
@@ -26,24 +22,25 @@ function SignIn() {
       })
       .then((res) => {
         if (res.body) {
-          setError(true);
+          rootStore.signIn.errorTrue();
         } else {
           const { session, userId } = res;
           if (session && userId) {
             localStorage.setItem("user", userId);
             localStorage.setItem("session", session);
-            store.auth.login();
+            rootStore.auth.login();
+            rootStore.signIn.reset();
             navigate(HOME_PATH);
           } else {
-            setError(true);
+            rootStore.signIn.errorTrue();
           }
         }
       });
   };
 
   return useObserver(() => (
-    <div className=" min-h-full w-full">
-      {!isAdmin ? (
+    <div className=" min-h-full w-full relative">
+      {!rootStore.auth.isAdmin ? (
         <form
           className="border-2 border-solid border-slay-700 rounded-md p-10 w-1/2 flex flex-col gap-5 m-auto mt-10"
           onSubmit={adminLogin}
@@ -54,7 +51,7 @@ function SignIn() {
             label="Name"
             value={name}
             onChange={(e) => {
-              setName(e.target.value);
+              rootStore.signIn.addName(e.target.value);
             }}
             placeholder="Fill name"
           />
@@ -64,7 +61,7 @@ function SignIn() {
             value={password}
             type="password"
             onChange={(e) => {
-              setPassword(e.target.value);
+              rootStore.signIn.addPassword(e.target.value);
             }}
             placeholder="Fill password"
           />
