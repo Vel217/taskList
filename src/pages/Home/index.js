@@ -9,8 +9,6 @@ import { authGet, logOut } from "../../api/login/login.api.js";
 import ErrorBlock from "../../components/ErrorBlock.js";
 
 function App() {
-  const { isAdmin } = rootStore.auth.isAdmin;
-  const { error } = rootStore.notification.notification;
   const navigate = useNavigate();
 
   const login = () => {
@@ -25,10 +23,10 @@ function App() {
 
         rootStore.auth.login();
       } else {
-        rootStore.auth.login();
+        rootStore.auth.logout();
       }
     });
-  }, [isAdmin]);
+  }, [rootStore.auth.isAdmin]);
 
   const logout = useCallback(() => {
     const userId = localStorage.getItem("user");
@@ -44,25 +42,27 @@ function App() {
   return useObserver(() => (
     <div className="bg-white mx-auto p-10 relative">
       <div className="flex justify-end">
-        {isAdmin ? (
+        {rootStore.auth.isAdmin ? (
           <button
             onClick={() => logout()}
-            className="rounded-md bg-red-300 px-2.5 py-1.5 text-sm font-semibold text-black shadow-sm hover:bg-red-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
+            className="rounded-md bg-red-400 px-2.5 py-1.5 text-sm font-semibold text-gray-50 shadow-md hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
           >
             Logout
           </button>
         ) : (
           <button
             onClick={login}
-            className="rounded-md bg-teal-400 px-2.5 py-1.5 text-sm font-semibold text-black shadow-sm hover:bg-teal-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-400"
+            className="rounded-md bg-blue-500 px-2.5 py-1.5 text-sm font-semibold text-gray-50 shadow-md hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-400"
           >
             Login
           </button>
         )}
       </div>
 
-      {error && <ErrorBlock text={"Error while getting data"} />}
-      <p className="text-2xl text-center"> TODO LIST</p>
+      {rootStore.notification.notification.error && (
+        <ErrorBlock text={"Error while getting data"} />
+      )}
+      <p className="text-2xl text-center mb-10"> TODO LIST</p>
 
       <TaskForm />
       <TaskTable />

@@ -9,14 +9,15 @@ import { useObserver } from "mobx-react-lite";
 
 function SignIn() {
   const navigate = useNavigate();
-  const { error, name, password } = rootStore.signIn.signIn;
+
   useEffect(() => {
-    if (name || password) rootStore.signIn.errorFalse();
-  }, [name, password]);
+    if (rootStore.signIn.signIn.name || rootStore.signIn.signIn.password)
+      rootStore.signIn.errorFalse();
+  }, [rootStore.signIn.signIn.name, rootStore.signIn.signIn.password]);
 
   const adminLogin = (e) => {
     e.preventDefault();
-    signIn(name, password)
+    signIn(rootStore.signIn.signIn.name, rootStore.signIn.signIn.password)
       .then((data) => {
         return data.json();
       })
@@ -42,14 +43,14 @@ function SignIn() {
     <div className=" min-h-full w-full relative">
       {!rootStore.auth.isAdmin ? (
         <form
-          className="border-2 border-solid border-slay-700 rounded-md p-10 w-1/2 flex flex-col gap-5 m-auto mt-10"
+          className="shadow-xl rounded-md p-10 w-1/2 flex flex-col gap-5 m-auto mt-10"
           onSubmit={adminLogin}
         >
           <h1 className="text-center text-2xl"> LOGIN</h1>
 
           <Input
             label="Name"
-            value={name}
+            value={rootStore.signIn.signIn.name}
             onChange={(e) => {
               rootStore.signIn.addName(e.target.value);
             }}
@@ -58,7 +59,7 @@ function SignIn() {
 
           <Input
             label="Password"
-            value={password}
+            value={rootStore.signIn.signIn.password}
             type="password"
             onChange={(e) => {
               rootStore.signIn.addPassword(e.target.value);
@@ -73,7 +74,9 @@ function SignIn() {
             SignIn
           </button>
 
-          {error && <ErrorBlock text="Authentication error" />}
+          {rootStore.signIn.signIn.error && (
+            <ErrorBlock text="Authentication error" />
+          )}
         </form>
       ) : (
         navigate("/")

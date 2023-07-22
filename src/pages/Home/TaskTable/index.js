@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { getTask } from "../../../api/task/task.api.js";
-
 import SortButton from "./SortButton.js";
 import Pagination from "./Pagination.js";
 import TableItem from "./TableItem.js";
@@ -11,9 +10,6 @@ import ModalWindow from "./ModalWindow.js";
 import rootStore from "../../../stores/CombineStore.js";
 
 function TaskTable() {
-  const { error, currentPage, sortBy, sortDirection, isModalOpen } =
-    rootStore.taskTable.taskTable;
-
   const handleOpenModal = (item) => {
     rootStore.taskTable.changeCurrentItem(item);
     rootStore.taskTable.modalIsOpen(true);
@@ -26,11 +22,21 @@ function TaskTable() {
   };
 
   useEffect(() => {
+    console.log("effect before");
     fetchTasks();
-  }, [currentPage, sortBy, sortDirection]);
+    console.log("effect after");
+  }, [
+    rootStore.taskTable.taskTable.sortBy,
+    rootStore.taskTable.taskTable.sortDirection,
+  ]);
 
   const fetchTasks = () => {
-    getTask(currentPage, sortBy, sortDirection)
+    console.log("get");
+    getTask(
+      rootStore.taskTable.taskTable.currentPage,
+      rootStore.taskTable.taskTable.sortBy,
+      rootStore.taskTable.taskTable.sortDirection
+    )
       .then((res) => res.json())
       .then((data) => {
         rootStore.taskTable.addList(data.tasks);
@@ -42,9 +48,9 @@ function TaskTable() {
   };
 
   const handleSort = (field) => {
-    if (field === sortBy) {
+    if (field === rootStore.taskTable.taskTable.sortBy) {
       rootStore.taskTable.changeSortDirection(
-        sortDirection === ASC ? DESC : ASC
+        rootStore.taskTable.taskTable.sortDirection === ASC ? DESC : ASC
       );
     } else {
       rootStore.taskTable.changeSortBy(field);
@@ -58,36 +64,37 @@ function TaskTable() {
 
   const handlePageChange = (newPage) => {
     rootStore.taskTable.changeCurrentPage(newPage);
+    fetchTasks();
   };
 
   return useObserver(() => (
-    <div className="border-solid border-2 border-slay-200 rounded-md p-4">
-      <p className="text-xl text-slate-400"> List of tasks</p>
+    <div className="shadow-md rounded-md bg-gray-50 p-4 my-4 px-10">
+      <p className="text-2xl text-gray-600 mb-4"> List of tasks</p>
 
       <div className="mt-8 flow-root">
         <div className="flex gap-5">
           <SortButton
             text="Sort by Name"
             onClick={sortByName}
-            sortDirection={sortDirection}
+            sortDirection={rootStore.taskTable.taskTable.sortDirection}
           />
           <SortButton
             text="Sort by Email"
             onClick={sortByEmail}
-            sortDirection={sortDirection}
+            sortDirection={rootStore.taskTable.taskTable.sortDirection}
           />
           <SortButton
             text="Sort by Status"
             onClick={sortByStatus}
-            sortDirection={sortDirection}
+            sortDirection={rootStore.taskTable.taskTable.sortDirection}
           />
         </div>
-        <div className="-mx-4 -my-2 overflow-x-auto lg:-mx-8">
+        <div className=" overflow-x-auto -mx-12">
           <div className="inline-block min-w-full py-2 align-middle  lg:px-8">
-            <table className="min-w-full divide-y divide-gray-300 ml-5">
+            <table className="w-full divide-y divide-gray-200 mx-5">
               <TableHeader />
 
-              {!error ? (
+              {!rootStore.taskTable.taskTable.error ? (
                 <TableItem onClickEdit={handleOpenModal} />
               ) : (
                 <>Error to get task list, try again</>
@@ -100,7 +107,9 @@ function TaskTable() {
         </div>
       </div>
 
-      {isModalOpen && <ModalWindow onClose={handleCloseModal} />}
+      {rootStore.taskTable.taskTable.isModalOpen && (
+        <ModalWindow onClose={handleCloseModal} />
+      )}
     </div>
   ));
 }

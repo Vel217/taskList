@@ -30,7 +30,6 @@ tasksRouter.get("/task", async (req, res) => {
 
     res.json(tasks);
   } catch (error) {
-    console.error("Ошибка при получении списка задач:", error);
     res.status(500).json({ error: "Ошибка при получении списка задач" });
   }
 });
@@ -65,9 +64,9 @@ tasksRouter.delete("/task", async (req, res) => {
       return res.status(403).json({ message: "notAuthenticate" });
     }
   } catch (error) {
-    console.error("Ошибка при удалении задачи:", error);
     res.status(500).json({ error: "Ошибка при удалении задачи" });
   }
+  //
 });
 
 export default tasksRouter;

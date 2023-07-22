@@ -1,8 +1,8 @@
-import { observer } from "mobx-react-lite";
+import { useObserver } from "mobx-react-lite";
 import rootStore from "../../../stores/CombineStore.js";
 
 function TableHeader() {
-  return (
+  return useObserver(() => (
     <thead>
       <tr>
         <th
@@ -21,7 +21,7 @@ function TableHeader() {
           scope="col"
           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
         >
-          text
+          Text
         </th>
         <th
           scope="col"
@@ -38,14 +38,14 @@ function TableHeader() {
         {rootStore.auth.isAdmin && (
           <th
             scope="col"
-            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+            className="px-3 py-3.5 text-right text-sm font-semibold text-gray-900"
           >
-            Action
+            Actions
           </th>
         )}
       </tr>
     </thead>
-  );
+  ));
 }
 
-export default observer(TableHeader);
+export default TableHeader;

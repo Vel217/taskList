@@ -14,10 +14,10 @@ const TaskFormStore = observable({
     this.taskForm.name = name;
   }),
   addEmail: action(function (email) {
-    this.taskForm.password = email;
+    this.taskForm.email = email;
   }),
   addText: action(function (text) {
-    this.taskForm.password = text;
+    this.taskForm.text = text;
   }),
   errorTrue: action(function () {
     this.taskForm.error = true;

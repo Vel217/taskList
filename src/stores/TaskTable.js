@@ -25,6 +25,7 @@ const TaskTable = observable({
   }),
   changeCurrentPage: action(function (page) {
     this.taskTable.currentPage = page;
+    console.log(this.taskTable.currentPage);
   }),
 
   changeTotalPage: action(function (total) {
