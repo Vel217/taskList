@@ -6,11 +6,11 @@ import TaskForm from "./TaskForm/index.js";
 import TaskTable from "./TaskTable/index.js";
 import rootStore from "../../stores/CombineStore.js";
 import { authGet, logOut } from "../../api/login/login.api.js";
-import ErrorBlock from "./TaskForm/ErrorBlock.js";
+import ErrorBlock from "../../components/ErrorBlock.js";
 
 function App() {
   const navigate = useNavigate();
-  const [isAdmin, setIsAdmin] = useState(localStorage.getItem("session"));
+  const [isAdmin, setIsAdmin] = useState(rootStore.auth.isAdmin);
   const [error, setError] = useState(false);
 
   const login = () => {
@@ -22,9 +22,12 @@ function App() {
     authGet(authId).then((res) => {
       if (res.status === 200) {
         setError(false);
+        rootStore.notification.errorFalse();
         setIsAdmin(true);
+        rootStore.auth.login();
       } else {
         setIsAdmin(false);
+        rootStore.auth.login();
       }
     });
   }, [isAdmin]);
@@ -40,7 +43,7 @@ function App() {
     rootStore.auth.logout();
   }, []);
   return useObserver(() => (
-    <div className="bg-white mx-auto p-10">
+    <div className="bg-white mx-auto p-10 relative">
       <div className="flex justify-end">
         {isAdmin ? (
           <button
@@ -59,7 +62,7 @@ function App() {
         )}
       </div>
 
-      {error && <ErrorBlock />}
+      {error && <ErrorBlock text={"Error while getting data"} />}
       <p className="text-2xl text-center"> TODO LIST</p>
 
       <TaskForm />

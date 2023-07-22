@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { sendTask } from "../../../api/task/task.api.js";
 import Input from "../../../components/Input.js";
-import SuccessBlock from "./SuccessBlock.js";
+import SuccessBlock from "../../../components/SuccessBlock.js";
 import rootStore from "../../../stores/CombineStore.js";
 import { useObserver } from "mobx-react-lite";
 
-import ErrorBlock from "./ErrorBlock.js";
 import { emailRegex } from "../../../components/regExp.js";
+import ErrorBlock from "../../../components/ErrorBlock.js";
 
 function TaskForm() {
   const [name, setName] = useState("");
@@ -66,12 +66,19 @@ function TaskForm() {
           label="Email"
           value={email}
           onChange={onChangeEmail}
-          placeholder="test@test.com"
+          placeholder="Fill email"
         />
         {isValidEmail ? null : (
-          <span className="text-red-400">
-            field should be like format: test@test.com
-          </span>
+          <div class="rounded-md bg-red-50 p-4">
+            <div class="flex">
+              <div class="flex-shrink-0"></div>
+              <div class="ml-3">
+                <div class="mt-2 text-sm text-red-700">
+                  <p>The email must be in the format: test@test.com</p>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
       <label
@@ -99,8 +106,14 @@ function TaskForm() {
         >
           Send new task in list
         </button>
-        {successfulSending && <SuccessBlock />}
-        {error && <ErrorBlock />}
+        {successfulSending && (
+          <SuccessBlock
+            text={
+              "The task has been successfully created. Refresh the page to see the new list"
+            }
+          />
+        )}
+        {error && <ErrorBlock text={"Error creating task "} />}
       </div>
     </form>
   ));

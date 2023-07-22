@@ -2,27 +2,18 @@ import { useState } from "react";
 import { deleteTaskDB } from "../../../api/task/task.api.js";
 import ErrorBlock from "../../../components/ErrorBlock.js";
 
-import SuccessBlock from "../TaskForm/SuccessBlock.js";
+import SuccessBlock from "../../../components/SuccessBlock.js";
 
 function TableItem({ list, isAdmin, onClickEdit }) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
-  const [messages, setMessages] = useState({});
-
-  const showErrorMessage = (id) => {
-    setMessages((prevState) => ({ ...prevState, [id]: "error" }));
-  };
-
-  const showSuccessMessage = (id) => {
-    setMessages((prevState) => ({ ...prevState, [id]: "success" }));
-  };
 
   const deleteTask = (id) => {
     deleteTaskDB(id).then((res) => {
       if (res.status === 200) {
-        showSuccessMessage(id);
+        setSuccess(true);
       } else {
-        showErrorMessage(id);
+        setError(true);
       }
     });
   };
@@ -30,6 +21,20 @@ function TableItem({ list, isAdmin, onClickEdit }) {
   return (
     <>
       <tbody className="divide-y divide-gray-200">
+        {error && (
+          <ErrorBlock
+            text={
+              "Only an administrator can delete a task. Please login as an administrator"
+            }
+          />
+        )}
+        {success && (
+          <SuccessBlock
+            text={
+              "The task has been successfully delete. Refresh the page to see the new list"
+            }
+          />
+        )}
         {list.length ? (
           list.map((item) => (
             <tr key={item.id}>
@@ -68,13 +73,6 @@ function TableItem({ list, isAdmin, onClickEdit }) {
                         Delete
                       </button>
                     </div>
-
-                    {messages[item.id] === "error" && (
-                      <ErrorBlock
-                        text={"Your are not admin. You cant delete tasks"}
-                      />
-                    )}
-                    {messages[item.id] === "success" && <SuccessBlock />}
                   </div>
                 </td>
               )}

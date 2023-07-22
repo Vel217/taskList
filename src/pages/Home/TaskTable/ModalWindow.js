@@ -3,7 +3,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import React from "react";
 
 import { updateTaskDB } from "../../../api/task/task.api.js";
-import SuccessBlock from "../TaskForm/SuccessBlock.js";
+import SuccessBlock from "../../../components/SuccessBlock.js";
 import ErrorBlock from "../../../components/ErrorBlock.js";
 
 function ModalWindow({ item, onClose }) {
@@ -63,6 +63,23 @@ function ModalWindow({ item, onClose }) {
         </Transition.Child>
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            {success && (
+              <SuccessBlock
+                text={
+                  "The task has been successfully updated. Refresh the page to see the new list"
+                }
+              />
+            )}
+            {errorAdmin && (
+              <ErrorBlock
+                text={
+                  "You are not admin and can`t edit task. You need to login."
+                }
+              />
+            )}
+            {error && (
+              <ErrorBlock text={"false in try to update task. try again"} />
+            )}
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -130,19 +147,7 @@ function ModalWindow({ item, onClose }) {
                   >
                     Update
                   </button>
-                  {success && <SuccessBlock />}
-                  {errorAdmin && (
-                    <ErrorBlock
-                      text={
-                        "you`r not admin and can`t edit task. You need to login."
-                      }
-                    />
-                  )}
-                  {error && (
-                    <ErrorBlock
-                      text={"false in try to update task. try again"}
-                    />
-                  )}
+
                   <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-red-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300"
