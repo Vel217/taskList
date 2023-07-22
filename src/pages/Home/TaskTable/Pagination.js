@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import rootStore from "../../../stores/CombineStore.js";
 
 function Pagination({ onPageChange }) {
-  const { totalPages } = rootStore.taskTable.taskTable.totalPages;
+  const { totalPages } = rootStore.taskTable.taskTable;
   return (
     <div>
       {Array.from({ length: totalPages }, (_, index) => index + 1).map(
