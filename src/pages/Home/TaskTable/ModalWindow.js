@@ -9,7 +9,7 @@ import rootStore from "../../../stores/CombineStore.js";
 import { observer } from "mobx-react-lite";
 
 function ModalWindow({ onClose }) {
-  const { currentItem } = rootStore.taskTable.taskTable.currentItem;
+  const { currentItem } = rootStore.taskTable.taskTable;
   const { text, status, errorAdmin, error, success, name, email } =
     rootStore.modal.modal;
   const cancelButtonRef = useRef(null);

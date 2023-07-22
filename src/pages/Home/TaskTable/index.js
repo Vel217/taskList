@@ -33,10 +33,8 @@ function TaskTable() {
     getTask(currentPage, sortBy, sortDirection)
       .then((res) => res.json())
       .then((data) => {
-        console.log("data", data);
         rootStore.taskTable.addList(data.tasks);
         rootStore.taskTable.changeTotalPage(data.totalPages);
-        console.log(rootStore.taskTable.taskTable.list, "123");
       })
       .catch((error) => {
         rootStore.taskTable.errorTrue();
